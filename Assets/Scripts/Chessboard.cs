@@ -117,15 +117,13 @@ public class Chessboard : MonoBehaviour
                 if(isWhiteTurn)
                 {
                     c = Chessmans[x, y -1];
-                    activeChessman.Remove(c.gameObject);
-                    Destroy(c.gameObject);
                 }
                 else
                 {
                     c = Chessmans[x, y + 1];
-                    activeChessman.Remove(c.gameObject);
-                    Destroy(c.gameObject);
                 }
+                activeChessman.Remove(c.gameObject);
+                Destroy(c.gameObject);
             }
 
             enPassantMove[0] = -1;
