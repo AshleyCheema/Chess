@@ -11,8 +11,8 @@ public class Chessboard : MonoBehaviour
     public Chessman[,] Chessmans { set; get; }
     private Chessman selectedChessman;
 
-    private const float TILE_SIZE = 1.0f;
-    private const float TILE_OFFSET = 0.5f;
+    //private const float TILE_SIZE = 1.0f;
+    //private const float TILE_OFFSET = 0.5f;
 
     private int selectionX = -1;
     private int selectionY = -1;
@@ -29,11 +29,27 @@ public class Chessboard : MonoBehaviour
 
     public bool isWhiteTurn = true;
 
+    float TILE_SIZE;
+    float TILE_OFFSET;
+
+    public Transform GridStartPos;
+    public Transform GridEndPos;
+
     RaycastHit hit;
 
     private void Start()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+
+        TILE_SIZE = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
+        TILE_OFFSET = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 16;
         SpawnAllChessMans();
     }
 
@@ -72,6 +88,7 @@ public class Chessboard : MonoBehaviour
 
         bool hasAtLeastOneMove = false;
         AllowedMoves = Chessmans[x, y].PossibleMove();
+
         for(int i = 0; i < 8; i++)
         {
             for(int j = 0; j < 8; j++)
@@ -193,12 +210,21 @@ public class Chessboard : MonoBehaviour
 
     private void SpawnChessman(int index, int x, int y)
     {
-        GameObject go = Instantiate(chessmanPrefabs[index], GetTileCenter(x,y), orientation) as GameObject;
+        GameObject go = Instantiate(chessmanPrefabs[index], GridStartPos.transform.position + GetCenter(x,y), orientation) as GameObject;
         go.transform.SetParent(transform);
         Chessmans[x,y] = go.GetComponent<Chessman>();
         Chessmans[x, y].SetPosition(x, y);
         activeChessman.Add(go);
         Chessmans[x, y].Init();
+        go.transform.localScale = new Vector3(1, 1, 1);
+    }
+
+    private Vector3 GetCenter(int x, int y)
+    {
+        Vector3 origin = Vector3.zero;
+        origin.x += GridStartPos.transform.position.x + (TILE_SIZE * x) + TILE_OFFSET;
+        origin.z += GridStartPos.transform.position.z + (TILE_SIZE * y) + TILE_OFFSET;
+        return origin;
     }
 
     private void SpawnAllChessMans()
@@ -206,7 +232,7 @@ public class Chessboard : MonoBehaviour
         activeChessman = new List<GameObject>();
         Chessmans = new Chessman[8, 8];
         enPassantMove = new int[2] { -1, -1 };
-
+        
         //Black Team
         //King
         SpawnChessman(0, 3, 7);
@@ -258,22 +284,41 @@ public class Chessboard : MonoBehaviour
 
     private void DrawChessboard()
     {
-        Vector3 widthLine = Vector3.right * 8;
-        Vector3 heightLine = Vector3.forward * 8;
 
-        for(int i = 0; i <= 8; i++)
+        float width = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
+        float height = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
+
+        Vector3 widthLine = GridStartPos.transform.position + new Vector3(height * 8, 0, 0);
+        Vector3 heightLine = GridStartPos.transform.position + new Vector3(0, 0, height * 8);
+
+        for (int i = 0; i <= 8; i++)
         {
-            Vector3 start = Vector3.forward * i;
-            Debug.DrawLine(start, start + widthLine);
-
+            Vector3 start = GridStartPos.transform.position + new Vector3(0, 0, height * i);
+            Debug.DrawLine(start, new Vector3(start.x + widthLine.x, start.y, start.z + widthLine.z));
+        
             for(int j = 0; j <= 8; j++)
             {
-                start = Vector3.right * j;
-                Debug.DrawLine(start, start + heightLine);
+                start = GridStartPos.transform.position + new Vector3(width * j, 0, 0);
+                Debug.DrawLine(start, new Vector3(start.x + heightLine.x, start.y, start.z + heightLine.z));
             }
         }
 
-        if(selectionX >= 0 && selectionY >= 0)
+        //Vector3 widthLine = Vector3.right * 8;
+        //Vector3 heightLine = Vector3.forward * 8;
+        //
+        //for(int i = 0; i <= 8; i++)
+        //{
+        //    Vector3 start = Vector3.forward * i;
+        //    Debug.DrawLine(start, start + widthLine);
+        //
+        //    for(int j = 0; j <= 8; j++)
+        //    {
+        //        start = Vector3.right * j;
+        //        Debug.DrawLine(start, start + heightLine);
+        //    }
+        //}
+
+        if (selectionX >= 0 && selectionY >= 0)
         {
             Debug.DrawLine(Vector3.forward * selectionY + Vector3.right * selectionX,
                            Vector3.forward * (selectionY + 1) + Vector3.right * (selectionX + 1));
