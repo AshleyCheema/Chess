@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -29,13 +31,17 @@ public class Chessboard : MonoBehaviour
 
     public bool isWhiteTurn = true;
 
-    float TILE_SIZE;
+    public float TILE_SIZE;
     float TILE_OFFSET;
 
     public Transform GridStartPos;
     public Transform GridEndPos;
 
     RaycastHit hit;
+
+    [SerializeField]
+    private float TimerStartValue = 2.5f;
+    private float timer;
 
     private void Start()
     {
@@ -48,6 +54,13 @@ public class Chessboard : MonoBehaviour
             Destroy(this);
         }
 
+        timer = TimerStartValue;
+
+#region VERY COMPLEX CODE
+        UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
+
+#endregion
+
         TILE_SIZE = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
         TILE_OFFSET = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 16;
         SpawnAllChessMans();
@@ -57,6 +70,43 @@ public class Chessboard : MonoBehaviour
     {
         UpdateSelection();
         DrawChessboard();
+
+        if(!isWhiteTurn)
+        {
+
+            if (selectedChessman == null)
+            {
+                var blackPieces = activeChessman.Where(t => t.GetComponent<Chessman>().isWhite.Equals(false));
+                Chessman cm = blackPieces.ElementAt((int)UnityEngine.Random.Range(0f, blackPieces.Count() - 1)).GetComponent<Chessman>();
+                SelectChessman(cm.CurrentX, cm.CurrentY);
+                //SelectChessman(x,y);
+            }
+            else
+            {
+                if (timer >= 0f)
+                {
+                    timer -= Time.deltaTime;
+                    return;
+                }
+                timer = TimerStartValue;
+
+                List<Vector2> collection = new List<Vector2>();
+                Vector2 newMove;
+                for (int i = 0; i < AllowedMoves.GetLength(0); i++)
+                {
+                    for (int j = 0; j < AllowedMoves.GetLength(1); j++)
+                    {
+                        if (AllowedMoves[i, j] == true)
+                        {
+                            collection.Add(new Vector2(i, j));
+                        }
+                    }
+                }
+
+                newMove = collection[(int)UnityEngine.Random.Range(0f, collection.Count - 1)];
+                MoveChessman((int)newMove.x, (int)newMove.y);
+            }
+        }
 
         if(Input.GetMouseButtonDown (0))
         {
@@ -72,6 +122,7 @@ public class Chessboard : MonoBehaviour
                 }
             }
         }
+
     }
 
     private void SelectChessman(int x, int y)
@@ -193,36 +244,46 @@ public class Chessboard : MonoBehaviour
     {
         if(!Camera.main)
             return;
-
-        if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, LayerMask.GetMask("ChessPlane")))
+        if (Input.GetMouseButtonDown(0))
         {
-            //Debug.Log(hit.point);
-            selectionX = (int)hit.point.x;
-            selectionY = (int)hit.point.z;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, LayerMask.GetMask("ChessPlane")))
+            { 
+                //Debug.Log(hit.point);
+                selectionX = (int)(hit.point.x / TILE_SIZE);
+                selectionY = (int)(hit.point.z / TILE_SIZE);
+                Debug.Log("x" + selectionX);
+                Debug.Log("y" + selectionY);
+            }
+            else
+            {
+                selectionX = -1;
+                selectionY = -1;
+            }
         }
-        else
-        {
-            selectionX = -1;
-            selectionY = -1;
-        }
-        
     }
 
-    private void SpawnChessman(int index, int x, int y)
+    //private float Map(float v, float s1, float ss1, float s2, float ss2)
+    //{
+    //    return (v - s1) / (ss1 - s1) * (ss2 - s1) + ss1;
+    //}
+
+    private void SpawnChessman(int index, int x, int y, bool isWhite = false)
     {
-        GameObject go = Instantiate(chessmanPrefabs[index], GridStartPos.transform.position + GetCenter(x,y), orientation) as GameObject;
+        GameObject go = Instantiate(chessmanPrefabs[index], GetTileCenter(x,y), orientation) as GameObject;
         go.transform.SetParent(transform);
-        Chessmans[x,y] = go.GetComponent<Chessman>();
+        Chessmans[x, y] = go.GetComponent<Chessman>();
         Chessmans[x, y].SetPosition(x, y);
+        Chessmans[x, y].isWhite = isWhite;
         activeChessman.Add(go);
         Chessmans[x, y].Init();
         go.transform.localScale = new Vector3(1, 1, 1);
     }
 
-    private Vector3 GetCenter(int x, int y)
+    public Vector3 GetTileCenter(int x, int y)
     {
         Vector3 origin = Vector3.zero;
         origin.x += GridStartPos.transform.position.x + (TILE_SIZE * x) + TILE_OFFSET;
+        origin.y = GridStartPos.transform.position.y;
         origin.z += GridStartPos.transform.position.z + (TILE_SIZE * y) + TILE_OFFSET;
         return origin;
     }
@@ -255,32 +316,32 @@ public class Chessboard : MonoBehaviour
 
         //White Team
         //King
-        SpawnChessman(6, 4, 0);
+        SpawnChessman(6, 4, 0, true);
         //Queen
-        SpawnChessman(7, 3, 0);
+        SpawnChessman(7, 3, 0, true);
         //Rooks
-        SpawnChessman(8, 0, 0);
-        SpawnChessman(8, 7, 0);
+        SpawnChessman(8, 0, 0, true);
+        SpawnChessman(8, 7, 0, true);
         //Bishop
-        SpawnChessman(9, 2, 0);
-        SpawnChessman(9, 5, 0);
+        SpawnChessman(9, 2, 0, true);
+        SpawnChessman(9, 5, 0, true);
         //Knights
-        SpawnChessman(10, 1, 0);
-        SpawnChessman(10, 6, 0);
+        SpawnChessman(10, 1, 0, true);
+        SpawnChessman(10, 6, 0, true);
         //Pawns
         for (int i = 0; i < 8; i++)
         {
-            SpawnChessman(11, i, 1);
+            SpawnChessman(11, i, 1, true);
         }
     }
 
-    private Vector3 GetTileCenter(int x, int y)
-    {
-        Vector3 origin = Vector3.zero;
-        origin.x += (TILE_SIZE * x) + TILE_OFFSET;
-        origin.z += (TILE_SIZE * y) + TILE_OFFSET;
-        return origin;
-    }
+    //private Vector3 GetTileCenter(int x, int y)
+    //{
+    //    Vector3 origin = Vector3.zero;
+    //    origin.x += (TILE_SIZE * x) + TILE_OFFSET;
+    //    origin.z += (TILE_SIZE * y) + TILE_OFFSET;
+    //    return origin;
+    //}
 
     private void DrawChessboard()
     {
@@ -349,4 +410,13 @@ public class Chessboard : MonoBehaviour
         SpawnAllChessMans();
     }
 
+    public float ChessScale(float a_value)
+    {
+        return 0f;
+    }
+
+    public void AITime()
+    {
+
+    }
 }

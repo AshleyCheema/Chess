@@ -64,7 +64,7 @@ public class Bishop : Chessman
         {
             i--;
             j--;
-            if (i < 0 || j < 8)
+            if (i < 0 || j < 7)
                 break;
 
             c = Chessboard.Instance.Chessmans[i, j];
@@ -87,7 +87,7 @@ public class Bishop : Chessman
         {
             i++;
             j--;
-            if (i >= 0 || j < 0)
+            if (i > 7 || j < 0)
                 break;
 
             c = Chessboard.Instance.Chessmans[i, j];

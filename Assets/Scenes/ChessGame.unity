@@ -1076,7 +1076,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 931198404}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -60.03, y: 23.007645, z: 59.909992}
+  m_LocalPosition: {x: -60.03, y: 17.2, z: 59.909992}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 866362993}
@@ -1251,22 +1251,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chessmanPrefabs:
-  - {fileID: 1236502180081964, guid: e73d692c9d94ea94183fd55b38fb54bc, type: 2}
-  - {fileID: 1567545933156472, guid: d9d55414723ca4c4cb8f54b5000fa015, type: 2}
-  - {fileID: 1865224133906432, guid: 99efd505ebcdd5a4ab0402fece6a6a92, type: 2}
-  - {fileID: 1391861029809516, guid: 24fe2c4f474a5064a9a4796dbde3632e, type: 2}
-  - {fileID: 1311590388107600, guid: 7410587f5a397ba429a267bbc01407a7, type: 2}
-  - {fileID: 1783651454654594, guid: e70f2624aa9828d41aa15486f5dc8c0c, type: 2}
-  - {fileID: 1371243589858186, guid: f597ff511d8d6db44b1f969c312c449f, type: 2}
-  - {fileID: 1793006496257838, guid: 33553df64c3ae4d40be2aa58bfe695b6, type: 2}
-  - {fileID: 1505570789871396, guid: 4e902ca728cd79a49b172c6cb1062219, type: 2}
-  - {fileID: 1854690443334706, guid: 71c3b1f0f10d0f946b806a2a02a8fd3b, type: 2}
-  - {fileID: 1319835302894512, guid: 405568a2e773e054abca68a3dc76c13e, type: 2}
-  - {fileID: 1683819814435280, guid: 4a0b395dbc3c7364e9868c5137ce55ad, type: 2}
+  - {fileID: 1168239410325570, guid: e73d692c9d94ea94183fd55b38fb54bc, type: 2}
+  - {fileID: 1832914578530168, guid: d9d55414723ca4c4cb8f54b5000fa015, type: 2}
+  - {fileID: 1003676987255454, guid: 99efd505ebcdd5a4ab0402fece6a6a92, type: 2}
+  - {fileID: 1475094549812836, guid: 24fe2c4f474a5064a9a4796dbde3632e, type: 2}
+  - {fileID: 1683296701947380, guid: 7410587f5a397ba429a267bbc01407a7, type: 2}
+  - {fileID: 1049291925120986, guid: e70f2624aa9828d41aa15486f5dc8c0c, type: 2}
+  - {fileID: 1074243135160252, guid: f597ff511d8d6db44b1f969c312c449f, type: 2}
+  - {fileID: 1497076919913262, guid: 33553df64c3ae4d40be2aa58bfe695b6, type: 2}
+  - {fileID: 1387412775048082, guid: 4e902ca728cd79a49b172c6cb1062219, type: 2}
+  - {fileID: 1051216359325948, guid: 71c3b1f0f10d0f946b806a2a02a8fd3b, type: 2}
+  - {fileID: 1128901523402256, guid: 405568a2e773e054abca68a3dc76c13e, type: 2}
+  - {fileID: 1443038269221022, guid: 4a0b395dbc3c7364e9868c5137ce55ad, type: 2}
   selectedMat: {fileID: 2100000, guid: 54662950d75578e46892a5004d199898, type: 2}
   isWhiteTurn: 1
+  TILE_SIZE: 0
   GridStartPos: {fileID: 1599615031}
   GridEndPos: {fileID: 931198405}
+  TimerStartValue: 1.5
 --- !u!4 &1213539546
 Transform:
   m_ObjectHideFlags: 0
@@ -1292,7 +1294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aacea12c84df104584bb8cfc7183639, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightPrefab: {fileID: 1788456928588984, guid: c2a7e768acc28044b93ed798cde178b8,
+  highlightPrefab: {fileID: 1605138618709084, guid: c2a7e768acc28044b93ed798cde178b8,
     type: 2}
 --- !u!1001 &1221849320
 Prefab:
@@ -1638,7 +1640,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1599615030}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 59.850002, y: 19, z: 59.909992}
+  m_LocalPosition: {x: 59.850002, y: 17.2, z: 59.909992}
   m_LocalScale: {x: 0.99982303, y: 1.0003326, z: 1.0000455}
   m_Children: []
   m_Father: {fileID: 866362993}

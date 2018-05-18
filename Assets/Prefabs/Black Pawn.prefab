@@ -9,20 +9,19 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1783651454654594}
+  m_RootGameObject: {fileID: 1049291925120986}
   m_IsPrefabParent: 1
---- !u!1 &1783651454654594
+--- !u!1 &1049291925120986
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4790416500831436}
-  - component: {fileID: 33708535961595408}
-  - component: {fileID: 23839240610781134}
-  - component: {fileID: 136227690414154384}
-  - component: {fileID: 114044932254579066}
+  - component: {fileID: 4982070742124580}
+  - component: {fileID: 33023084308130128}
+  - component: {fileID: 23479076939619224}
+  - component: {fileID: 114268342571881814}
   m_Layer: 0
   m_Name: Black Pawn
   m_TagString: Untagged
@@ -30,12 +29,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4790416500831436
+--- !u!4 &4982070742124580
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1783651454654594}
+  m_GameObject: {fileID: 1049291925120986}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -43,12 +42,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23839240610781134
+--- !u!23 &23479076939619224
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1783651454654594}
+  m_GameObject: {fileID: 1049291925120986}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -78,35 +77,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33708535961595408
+--- !u!33 &33023084308130128
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1783651454654594}
+  m_GameObject: {fileID: 1049291925120986}
   m_Mesh: {fileID: 4300000, guid: f38a3fa99465f754e930b3429d0dc24c, type: 3}
---- !u!114 &114044932254579066
+--- !u!114 &114268342571881814
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1783651454654594}
+  m_GameObject: {fileID: 1049291925120986}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25842f8f568a5e849a274519f62eb0e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isWhite: 0
---- !u!136 &136227690414154384
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1783651454654594}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}

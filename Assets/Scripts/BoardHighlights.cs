@@ -38,7 +38,8 @@ public class BoardHighlights : MonoBehaviour
                 {
                     GameObject go = GetHighlightObject();
                     go.SetActive(true);
-                    go.transform.position = new Vector3(i + 0.5f, 0, j + 0.5f);
+                    go.transform.position = Chessboard.Instance.GetTileCenter(i, j);
+                    go.transform.localScale = new Vector3(Chessboard.Instance.TILE_SIZE * 0.1f, 1f, Chessboard.Instance.TILE_SIZE * 0.1f);
                 }
             }
         }
