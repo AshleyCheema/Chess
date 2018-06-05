@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using HoloToolkit.Unity.InputModule;
 
 
-public class Chessboard : MonoBehaviour
+public class Chessboard : MonoBehaviour, IFocusable, IInputClickHandler
 {
     public static Chessboard Instance { set; get; }
     private bool[,] AllowedMoves { set; get; }
@@ -37,6 +38,8 @@ public class Chessboard : MonoBehaviour
     public Transform GridStartPos;
     public Transform GridEndPos;
 
+    private bool isFocused;
+
     RaycastHit hit;
 
     [SerializeField]
@@ -66,10 +69,16 @@ public class Chessboard : MonoBehaviour
         SpawnAllChessMans();
     }
 
+    struct Tile
+    {
+        public Vector2 pos;
+        public bool whiteIs;
+    }
+
     private void Update()
     {
-        UpdateSelection();
-        DrawChessboard();
+        //UpdateSelection();
+        //DrawChessboard();
 
         if(!isWhiteTurn)
         {
@@ -90,21 +99,56 @@ public class Chessboard : MonoBehaviour
                 }
                 timer = TimerStartValue;
 
-                List<Vector2> collection = new List<Vector2>();
-                Vector2 newMove;
+                List<Tile> collection = new List<Tile>();
+                List<Vector2> moves = new List<Vector2>();
                 for (int i = 0; i < AllowedMoves.GetLength(0); i++)
                 {
                     for (int j = 0; j < AllowedMoves.GetLength(1); j++)
                     {
                         if (AllowedMoves[i, j] == true)
                         {
-                            collection.Add(new Vector2(i, j));
+                            Tile tileNew = new Tile();
+                            tileNew.pos = new Vector2(i, j);
+                            //tileNew.whiteIs = (Chessmans[i, j].isWhite) ? true : false;
+                            if (Chessmans[i, j] != null && Chessmans[i, j].isWhite)
+                            {
+                                tileNew.whiteIs = Chessmans[i, j].isWhite;
+                                collection.Add(tileNew);
+                            }
+                            else
+                            {
+                                moves.Add(new Vector2(i, j));
+                            }
                         }
                     }
                 }
 
-                newMove = collection[(int)UnityEngine.Random.Range(0f, collection.Count - 1)];
-                MoveChessman((int)newMove.x, (int)newMove.y);
+                if(collection.Count > 0)
+                {
+                    Tile tile = collection[UnityEngine.Random.Range(0, collection.Count - 1)];
+                    MoveChessman((int)tile.pos.x, (int)tile.pos.y);
+                }
+                else
+                {
+                    Vector2 newPos = moves[UnityEngine.Random.Range(0, moves.Count - 1)];
+                    MoveChessman((int)newPos.x, (int)newPos.y);
+                }
+
+                //newMove = collection[(int)UnityEngine.Random.Range(0f, collection.Count - 1)];
+                //MoveChessman((int)newMove.x, (int)newMove.y);
+
+            }
+        }
+
+        if(isFocused == true)
+        {
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, LayerMask.GetMask("ChessPlane")))
+            {
+                //Debug.Log(hit.point);
+                selectionX = (int)(hit.point.x / TILE_SIZE);
+                selectionY = (int)(hit.point.z / TILE_SIZE);
+                Debug.Log("x" + selectionX);
+                Debug.Log("y" + selectionY);
             }
         }
 
@@ -335,34 +379,26 @@ public class Chessboard : MonoBehaviour
         }
     }
 
-    //private Vector3 GetTileCenter(int x, int y)
-    //{
-    //    Vector3 origin = Vector3.zero;
-    //    origin.x += (TILE_SIZE * x) + TILE_OFFSET;
-    //    origin.z += (TILE_SIZE * y) + TILE_OFFSET;
-    //    return origin;
-    //}
-
     private void DrawChessboard()
     {
 
-        float width = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
-        float height = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
-
-        Vector3 widthLine = GridStartPos.transform.position + new Vector3(height * 8, 0, 0);
-        Vector3 heightLine = GridStartPos.transform.position + new Vector3(0, 0, height * 8);
-
-        for (int i = 0; i <= 8; i++)
-        {
-            Vector3 start = GridStartPos.transform.position + new Vector3(0, 0, height * i);
-            Debug.DrawLine(start, new Vector3(start.x + widthLine.x, start.y, start.z + widthLine.z));
-        
-            for(int j = 0; j <= 8; j++)
-            {
-                start = GridStartPos.transform.position + new Vector3(width * j, 0, 0);
-                Debug.DrawLine(start, new Vector3(start.x + heightLine.x, start.y, start.z + heightLine.z));
-            }
-        }
+        //float width = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
+        //float height = Vector3.Distance(GridStartPos.transform.position, GridEndPos.transform.position) / 8;
+        //
+        //Vector3 widthLine = GridStartPos.transform.position + new Vector3(height * 8, 0, 0);
+        //Vector3 heightLine = GridStartPos.transform.position + new Vector3(0, 0, height * 8);
+        //
+        //for (int i = 0; i <= 8; i++)
+        //{
+        //    Vector3 start = GridStartPos.transform.position + new Vector3(0, 0, height * i);
+        //    Debug.DrawLine(start, new Vector3(start.x + widthLine.x, start.y, start.z + widthLine.z));
+        //
+        //    for(int j = 0; j <= 8; j++)
+        //    {
+        //        start = GridStartPos.transform.position + new Vector3(width * j, 0, 0);
+        //        Debug.DrawLine(start, new Vector3(start.x + heightLine.x, start.y, start.z + heightLine.z));
+        //    }
+        //}
 
         //Vector3 widthLine = Vector3.right * 8;
         //Vector3 heightLine = Vector3.forward * 8;
@@ -379,14 +415,14 @@ public class Chessboard : MonoBehaviour
         //    }
         //}
 
-        if (selectionX >= 0 && selectionY >= 0)
-        {
-            Debug.DrawLine(Vector3.forward * selectionY + Vector3.right * selectionX,
-                           Vector3.forward * (selectionY + 1) + Vector3.right * (selectionX + 1));
-
-            Debug.DrawLine(Vector3.forward * (selectionY + 1) + Vector3.right * selectionX,
-                           Vector3.forward * selectionY + Vector3.right * (selectionX + 1));
-        }
+        //if (selectionX >= 0 && selectionY >= 0)
+        //{
+        //    Debug.DrawLine(Vector3.forward * selectionY + Vector3.right * selectionX,
+        //                   Vector3.forward * (selectionY + 1) + Vector3.right * (selectionX + 1));
+        //
+        //    Debug.DrawLine(Vector3.forward * (selectionY + 1) + Vector3.right * selectionX,
+        //                   Vector3.forward * selectionY + Vector3.right * (selectionX + 1));
+        //}
     }
 
     private void EndGame()
@@ -415,8 +451,31 @@ public class Chessboard : MonoBehaviour
         return 0f;
     }
 
-    public void AITime()
+    public void OnFocusEnter()
     {
+        isFocused = true;
+    }
 
+    public void OnFocusExit()
+    {
+        isFocused = false;
+        selectionX = -1;
+        selectionY = -1;
+    }
+
+    public void OnInputClicked(InputClickedEventData eventData)
+    {
+        Debug.Log("Tap tap");
+        if (selectionX >= 0 && selectionY >= 0)
+        {
+            if (selectedChessman == null)
+            {
+                SelectChessman(selectionX, selectionY);
+            }
+            else
+            {
+                MoveChessman(selectionX, selectionY);
+            }
+        }
     }
 }
